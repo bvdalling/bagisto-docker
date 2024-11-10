@@ -14,6 +14,8 @@ services:
       - 8081:80
     volumes:
       - ./workspace/:/var/www/html/
+    labels:
+      - traefik.http.services.bagisto-php-apache.loadbalancer.server.port=8081
 
   bagisto-mysql:
     image: mysql:8.0
