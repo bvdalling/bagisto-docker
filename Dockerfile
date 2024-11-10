@@ -52,5 +52,7 @@ RUN a2enmod rewrite
 RUN chmod -R 775 $container_project_path
 RUN chown -R $user:www-data $container_project_path
 
+EXPOSE 80
+
 # changing user
 USER $user
