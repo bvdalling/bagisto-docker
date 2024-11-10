@@ -11,10 +11,9 @@ services:
       dockerfile: ./Dockerfile
     image: bagisto-php-apache
     ports:
-      - 8001:80
+      - "8081:80"  # Randomized external port (host-side)
     volumes:
       - ./workspace/:/var/www/html/
-
     labels:
       - traefik.enable=true
       - "traefik.http.routers.http-0-egwkkcs88w044c40sskksk08-bagisto-php-apache.rule=Host(`shop.cachevalley.co`) && PathPrefix(`/`)"
@@ -27,17 +26,17 @@ services:
       MYSQL_ROOT_HOST: "%"
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - 3306:3306
+      - "3307:3306"  # Randomized external port (host-side)
     volumes:
-      - ./.configs/mysql-data:/var/lib/mysql/
+      - mysql-data:/var/lib/mysql/
 
   bagisto-redis:
     image: redis:6.2-alpine
     ports:
-      - 6379:6379
+      - "6380:6379"  # Randomized external port (host-side)
     command: redis-server --save 20 1 --loglevel warning
     volumes:
-      - ./.configs/redis-data:/data
+      - redis-data:/data
 
   bagisto-phpmyadmin:
     image: phpmyadmin:latest
@@ -47,7 +46,7 @@ services:
       PMA_PASSWORD: root
       UPLOAD_LIMIT: 512M
     ports:
-      - 8080:80
+      - "8082:80"  # Randomized external port (host-side)
 
   bagisto-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
@@ -64,26 +63,29 @@ services:
         soft: 65536
         hard: 65536
     volumes:
-      - ./.configs/elasticsearch-data:/var/lib/elasticsearch/data
+      - elasticsearch-data:/var/lib/elasticsearch/data
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9201:9200"  # Randomized external port (host-side)
+      - "9301:9300"  # Randomized external port (host-side)
 
   bagisto-kibana:
     image: docker.elastic.co/kibana/kibana:7.17.0
     environment:
       - ELASTICSEARCH_HOSTS=http://bagisto-elasticsearch:9200
     ports:
-      - 5601:5601
+      - "5602:5601"  # Randomized external port (host-side)
     depends_on:
       - bagisto-elasticsearch
 
   bagisto-mailpit:
     image: axllent/mailpit:latest
     logging:
-        # Disable saving logs.
-        driver: 'none'
+      driver: "json-file"  # Adjusted for Coolify logging
     ports:
-        # SMTP server.
-        - 1025:1025
-        - 8025:8025
+      - "1026:1025"  # Randomized external port (host-side)
+      - "8026:8025"  # Randomized external port (host-side)
+
+volumes:
+  mysql-data:
+  redis-data:
+  elasticsearch-data:
