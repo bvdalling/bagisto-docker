@@ -11,18 +11,9 @@ services:
       dockerfile: ./Dockerfile
     image: bagisto-php-apache
     ports:
-      - "8081:80"  # Randomized external port (host-side)
+      - "8081:80"
     volumes:
       - ./workspace/:/var/www/html/
-    labels:
-      - traefik.enable=true
-      - 'traefik.http.routers.bagisto-http.rule=Host(`shop.cachevalley.co`) && PathPrefix(`/`)'
-      - traefik.http.routers.bagisto-http.entryPoints=http
-      - traefik.http.routers.bagisto-https.rule=Host(`shop.cachevalley.co`) && PathPrefix(`/`)'
-      - traefik.http.routers.bagisto-https.entryPoints=https
-      - traefik.http.routers.bagisto-https.tls=true
-      - traefik.http.routers.bagisto-https.tls.certresolver=le  # Let's Encrypt
-      - traefik.http.services.bagisto-php-apache.loadbalancer.server.port=8081
 
   bagisto-mysql:
     image: mysql:8.0
